@@ -34,6 +34,11 @@ def delete_file_later(filepath, delay=5):
     threading.Thread(target=delayed_delete).start()
 
 
+@app.route("/")
+def home():
+    return "Hey!!! Whatcha doing here?"
+
+
 @app.route("/translate", methods=["POST"])
 def process_audio():
     try:
