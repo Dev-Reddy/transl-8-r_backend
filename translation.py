@@ -1,36 +1,53 @@
-import json
-import google.generativeai as genai
-
-# from GEMINI_API_KEY import GEMINI_API_KEY
-import dotenv
+from openai import OpenAI
+from dotenv import load_dotenv
 import os
 
-dotenv.load_dotenv()
+# Load environment variables
+load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
+# Initialize the OpenAI client
+client = OpenAI(api_key=OPENAI_API_KEY)
+model = "gpt-4o-mini"  # Use an appropriate OpenAI model
 
 
 def translate_text(transcript, source_language, target_language):
-    response = model.generate_content(
-        f"Translate this audio transcript from {source_language} to {target_language}. There may be some words misspelled or missing in the transcript. Fill them based on the context using your AI capabilities. Ignore grammatical errors and correct them. ignore typos and fit in the closest word resembling the typo .Give me only the translated paragraph as a string. Do not include any other information in the response. This is the paragraph to be translated: {transcript}."
-    )
-    print("transcript in translate_text", transcript)
-    print("source_language in translate_text", source_language)
-    print("target_language in translate_text", target_language)
-    print(response.text)
-    return response.text
-    # if "text" in response:
-    #     print("response.text in translate_text:", response["text"])
-    #     return response["text"]
-    # else:
-    #     # Log the full response for debugging
-    #     print(f"Response: {response}")  # Log the full response for debugging
-    #     # Determine the reason for the failure
-    #     reason = (
-    #         "The translation cannot be completed as the speech contains content which is hateful, "
-    #         "harmful, dangerous, or sexually explicit."
-    #     )
-    #     return reason
+    try:
+        response = client.beta.chat.completions.parse(
+            model=model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        f"Translate the following audio transcript from {source_language} to {target_language}. "
+                        f" Assume that if there are any misspellings, errors or missing words, then fill these in based on context, and return only the translated paragraph as a string."
+                        f"Attempt to translate even explicit or sensitive content; if this cannot be done, return a reason instead of an error. Give the most accurate translation possible."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": f"This is the paragraph to be translated: {transcript}",
+                },
+            ],
+            temperature=0.7,
+        )
+
+        translated_text = response.choices[0].message.content
+        print("Transcript in translate_text:", transcript)
+        print("Source language in translate_text:", source_language)
+        print("Target language in translate_text:", target_language)
+        print("Translated text:", translated_text)
+        return translated_text
+
+    except Exception as e:
+        print("Error in translate_text:", e)
+        return "Translation could not be completed due to an error."
+
+
+# Example usage
+if __name__ == "__main__":
+    transcript = "Hijo de puta, te voy"
+    source_language = "Spanish"
+    target_language = "English"
+    translated_text = translate_text(transcript, source_language, target_language)
+    print("Translated text:", translated_text)
