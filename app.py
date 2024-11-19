@@ -9,8 +9,8 @@ from translateAudio import translateAudio
 app = Flask(__name__)
 CORS(app)
 
-UPLOAD_FOLDER = "uploads"  # Directory to temporarily save uploaded files
-OUTPUT_FOLDER = "output"  # Directory to save processed files
+UPLOAD_FOLDER = "/tmp/uploads"  # Directory to temporarily save uploaded files
+OUTPUT_FOLDER = "/tmp/output"  # Directory to save processed files
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
