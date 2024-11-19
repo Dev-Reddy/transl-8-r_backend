@@ -1,6 +1,10 @@
 import assemblyai as aai
+import dotenv
+import os
 
-aai.settings.api_key = "efa11cfda3d6405a8e4df82db81b248f"
+dotenv.load_dotenv()
+
+aai.settings.api_key = os.getenv("ASSEMBLYAI_API_KEY")
 transcriber = aai.Transcriber()
 
 
