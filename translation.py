@@ -46,7 +46,7 @@ def translate_text(transcript, source_language, target_language):
 
 # Example usage
 if __name__ == "__main__":
-    transcript = "Hijo de puta, te voy"
+    transcript = "Hala Madrid"
     source_language = "Spanish"
     target_language = "English"
     translated_text = translate_text(transcript, source_language, target_language)
